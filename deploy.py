@@ -3,15 +3,22 @@ import os
 import helpers
 
 parser = argparse.ArgumentParser(description='Deploy Stack')
-parser.add_argument('-r', '--remove', action='store_true')
+parser.add_argument('-r', '--remove', action='store_true', help="remove stack")
+parser.add_argument('-k', '--kubernetes', action='store_true', help="Deploy to kubernetes")
 
 stack = 'apachephp'
 
 args = parser.parse_args()
 
 if args.remove:
-    os.system('docker stack rm ' + stack)
+    command = 'docker stack rm '
+    if args.kubernetes:
+        command += '--orchestrator=kubernetes '
+    os.system(command + stack)
 else:
     # deploy composer file into swarm
     os.environ.update(helpers.dot_env_vars('.env'))
-    os.system('docker stack deploy --compose-file docker-compose.yml ' + stack)
+    command = 'docker stack deploy --compose-file docker-compose.yml '
+    if args.kubernetes:
+        command += '--orchestrator=kubernetes '
+    os.system(command + stack)

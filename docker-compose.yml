@@ -5,14 +5,16 @@ services:
         deploy:
             replicas: 1
         configs:
-            -
-                source: httpd-conf
-                target: /usr/local/apache2/conf/httpd.conf
+            - source: httpd-conf
+              target: /usr/local/apache2/conf/httpd.conf
         environment:
             DOCUMENTROOT: $DOCUMENTROOT
             PHPSERVER: $PHPSERVER
         volumes:
-            - ${HOST_PROJECT_DIR}:${DOCUMENTROOT}:ro
+            - type: bind
+              source: ${HOST_PROJECT_DIR}
+              target: ${DOCUMENTROOT}
+              read_only: true
         ports:
             - '${HOST_PORT}:80'
         networks:
@@ -24,16 +26,16 @@ services:
         deploy:
             replicas: 1
         configs:
-            -
-                source: php-ini
-                target: /usr/local/etc/php/php.ini
-            -
-                source: php-fpm
-                target: /usr/local/etc/php-fpm.conf
+            - source: php-ini
+              target: /usr/local/etc/php/php.ini
+            - source: php-fpm
+              target: /usr/local/etc/php-fpm.conf
         ports:
             - '${XDEBUG_PORT}:80'
         volumes:
-            - ${HOST_PROJECT_DIR}:${DOCUMENTROOT}:rw
+            - type: bind
+              source: ${HOST_PROJECT_DIR}
+              target: ${DOCUMENTROOT}
         environment:
             XDEBUG_CONFIG: $XDEBUG_CONFIG
         networks:
