@@ -27,7 +27,7 @@ python deploy.py
 ```
 
 Your LAMP stack is now ready. You can access it via `http://localhost:8080`.
-> Note. Port is defined with `HOST_PORT` variable as `.env` file
+> Note. Port is defined with `HOST_PORT` variable at `.env` file
 
 ##  Configuration and Usage
 
