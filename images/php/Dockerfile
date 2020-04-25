@@ -54,10 +54,22 @@ RUN set -xe && \
     rm -rf /tmp/* && \
     apk del .memcached-deps .phpize-deps
 
-# Copy pool configuration (not required at swarm mode)
-# COPY conf/php-fpm.conf "/usr/local/etc/php-fpm.conf"
+# intl, zip, soap
+RUN apk add --update --no-cache libintl icu icu-dev libxml2-dev zip libzip-dev \
+    && docker-php-ext-install intl zip soap
 
-# Copy development configuration (not required at swarm mode)
-# COPY conf/php.ini "${PHP_INI_DIR}/php.ini"
+# mysqli
+RUN docker-php-ext-install mysqli
+
+# mcrypt, gd
+RUN apk add --update --no-cache \
+        libmcrypt-dev \
+        freetype-dev \
+        libjpeg-turbo-dev \
+        libpng-dev \
+    && printf "\n" | pecl install mcrypt \
+    && docker-php-ext-enable mcrypt \
+    && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
+    && docker-php-ext-install -j"$(getconf _NPROCESSORS_ONLN)" gd
 
 EXPOSE 9001

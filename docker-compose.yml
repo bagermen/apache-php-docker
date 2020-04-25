@@ -1,54 +1,97 @@
 version: "3.7"
 services:
-    apache:
-        image: httpd:2.4-alpine
-        deploy:
-            replicas: 1
-        configs:
-            - source: httpd-conf
-              target: /usr/local/apache2/conf/httpd.conf
-        environment:
-            DOCUMENTROOT: $DOCUMENTROOT
-            PHPSERVER: $PHPSERVER
-        volumes:
-            - type: bind
-              source: ${HOST_PROJECT_DIR}
-              target: ${DOCUMENTROOT}
-              read_only: true
-        ports:
-            - '${HOST_PORT}:80'
-        networks:
-            phpfpmnetwork:
-                aliases:
-                    - apache
-    phpserver:
-        image: besogon1/php-fpm-dbs:1.0
-        deploy:
-            replicas: 1
-        configs:
-            - source: php-ini
-              target: /usr/local/etc/php/php.ini
-            - source: php-fpm
-              target: /usr/local/etc/php-fpm.conf
-        ports:
-            - '${XDEBUG_PORT}:80'
-        volumes:
-            - type: bind
-              source: ${HOST_PROJECT_DIR}
-              target: ${DOCUMENTROOT}
-        environment:
-            XDEBUG_CONFIG: $XDEBUG_CONFIG
-        networks:
-            phpfpmnetwork:
-                aliases:
-                    - ${PHPSERVER}
+  apache:
+    labels:
+      type: httpd
+    image: httpd:2.4-alpine
+    deploy:
+      replicas: 1
+    configs:
+      - source: httpd-conf
+        target: /usr/local/apache2/conf/httpd.conf
+    environment:
+      DOCUMENTROOT: /var/www/html
+      PHPSERVER: phpserver
+    volumes:
+      - type: bind
+        source: ${HOST_PROJECT_DIR}
+        target: /var/www/html
+        read_only: true
+    ports:
+      - '${HOST_PORT}:80'
+    networks:
+      - phpfpmnetwork
+  phpserver:
+    labels:
+      type: php
+    image: besogon1/php-fpm-dbs:2.0
+    deploy:
+      replicas: 1
+    configs:
+      - source: php-ini
+        target: /usr/local/etc/php/php.ini
+      - source: php-fpm
+        target: /usr/local/etc/php-fpm.conf
+    ports:
+      - '${XDEBUG_PORT}:80'
+    volumes:
+      - type: bind
+        source: ${HOST_PROJECT_DIR}
+        target: /var/www/html
+    environment:
+      XDEBUG_CONFIG: $XDEBUG_CONFIG
+    networks:
+      phpfpmnetwork:
+  memcached:
+    image: memcached:1.6.5-alpine
+    deploy:
+      replicas: 1
+    networks:
+      - phpfpmnetwork
+  database:
+    labels:
+      type: database
+    image: mysql:8.0
+    deploy:
+      replicas: 1
+    environment:
+      MYSQL_DATABASE: ${DATABASE}
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+    volumes:
+      - type: volume
+        source: mysql_data
+        target: /var/lib/mysql
+    configs:
+      - source: mysql-conf
+        target: /etc/mysql/my.cnf
+    secrets:
+      - mysql_root_password
+    ports:
+      - '${DATABASE_PORT}:3306'
+    networks:
+      phpfpmnetwork:
+        aliases:
+          - database
+
 networks:
-    phpfpmnetwork:
+  phpfpmnetwork:
 
 configs:
-    httpd-conf:
-        file: ./images/apache/conf/httpd.conf
-    php-ini:
-        file: ./images/php/conf/php.ini
-    php-fpm:
-        file: ./images/php/conf/php-fpm.conf
+  httpd-conf:
+    file: ${APACHE_CONF}
+  php-ini:
+    file: ${PHP_INI}
+  php-fpm:
+    file: ${PHP_FPM}
+  mysql-conf:
+    file: ${MY_CNF}
+
+secrets:
+  mysql_root_password:
+    file: ./images/mysql/conf/root_password
+volumes:
+  mysql_data:
+    external: true
+    name: phpapachemysql_mysql
