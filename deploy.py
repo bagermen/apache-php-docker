@@ -1,6 +1,6 @@
 import argparse
 import os
-import helpers
+from helpers import dot_env_vars
 
 parser = argparse.ArgumentParser(description='Deploy Stack')
 parser.add_argument('-r', '--remove', action='store_true', help="remove stack")
@@ -17,7 +17,7 @@ if args.remove:
     os.system(command + stack)
 else:
     # deploy composer file into swarm
-    os.environ.update(helpers.dot_env_vars('.env'))
+    os.environ.update(dot_env_vars('.env'))
     command = 'docker stack deploy --compose-file docker-compose.yml '
     if args.kubernetes:
         command += '--orchestrator=kubernetes '

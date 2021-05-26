@@ -7,7 +7,7 @@ import os,sys,inspect
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_dir = os.path.dirname(os.path.dirname(current_dir))
 sys.path.insert(0, parent_dir)
-import helpers
+from helpers import dot_env_vars
 
 parser = argparse.ArgumentParser(description='Create image')
 parser.add_argument('image')
@@ -44,7 +44,7 @@ if check_image_exists(image, tag=tag):
         sys.exit()
 
 build_cmd = "docker build -t " + image + ":" + tag
-variables = helpers.dot_env_vars('.env')
+variables = dot_env_vars('.env')
 
 for var in variables:
     build_cmd += " --build-arg " + var + "=" + variables[var]

@@ -27,7 +27,7 @@ RUN docker-php-ext-install pdo_pgsql
 # Install xdebug
 RUN pecl install xdebug \
     && docker-php-ext-enable xdebug \
-    && echo "xdebug.remote_port=9001" >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini
+    && echo "xdebug.client_port=9001" >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini
 
 
 # Install PHP Extensions: igbinary & memcached

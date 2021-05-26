@@ -49,6 +49,7 @@ APACHE_CONF|Path to `httpd.conf`
 PHP_INI|Path to `php.ini`
 PHP_FPM|Path to `php-fpm.conf`
 MY_CNF|Path to `my.cnf`
+MY_CFG|Path to `root_password`
 XDEBUG_CONFIG|Xdebug configuration
 XDEBUG_PORT|Host port at which Xdebug is available at
 DATABASE|Default database name

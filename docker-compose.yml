@@ -90,7 +90,7 @@ configs:
 
 secrets:
   mysql_root_password:
-    file: ./images/mysql/conf/root_password
+    file: ${MY_PWD}
 volumes:
   mysql_data:
     external: true
