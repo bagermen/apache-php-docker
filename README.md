@@ -126,49 +126,17 @@ Read article ["Step Debugging"](https://xdebug.org/docs/step_debug) for more det
 #### Extensions
 
 By default following extensions are installed.
-* ctype
-* curl
-* date
-* dom
-* fileinfo
-* filter
-* ftp
-* gd
-* hash
-* iconv
-* igbinary
-* intl
-* json
-* libxml
-* mbstring
-* mcrypt
-* memcached
 * mysqli
-* mysqlnd
-* openssl
-* pcre
-* PDO
 * pdo_mysql
 * pdo_pgsql
-* pdo_sqlite
-* Phar
-* posix
-* readline
-* Reflection
-* session
-* SimpleXML
-* soap
-* sodium
-* SPL
-* sqlite3
-* standard
-* tokenizer
-* xdebug
-* xml
-* xmlreader
-* xmlwriter
+* memcached
+* igbinary
+* intl
 * zip
-* zlib
+* soap
+* mcrypt
+* gd
+* xdebug
 
 > Note. If you want to install more extensions, you have to create custom PHP image and use it instead of provided one.
 
