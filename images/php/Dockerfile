@@ -27,7 +27,9 @@ RUN docker-php-ext-install pdo_pgsql
 # Install xdebug
 RUN pecl install xdebug \
     && docker-php-ext-enable xdebug \
-    && echo "xdebug.client_port=9001" >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini
+    && echo "xdebug.client_host=host.docker.internal" >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.client_port=9001" >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.mode=debug" >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini
 
 
 # Install PHP Extensions: igbinary & memcached
@@ -71,5 +73,3 @@ RUN apk add --update --no-cache \
     && docker-php-ext-enable mcrypt \
     && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
     && docker-php-ext-install -j"$(getconf _NPROCESSORS_ONLN)" gd
-
-EXPOSE 9001

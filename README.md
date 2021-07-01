@@ -51,13 +51,76 @@ PHP_FPM|Path to `php-fpm.conf`
 MY_CNF|Path to `my.cnf`
 MY_CFG|Path to `root_password`
 XDEBUG_CONFIG|Xdebug configuration
-XDEBUG_PORT|Host port at which Xdebug is available at
 DATABASE|Default database name
 DATABASE_USER|Default database user
 DATABASE_PASSWORD|Default database user password
 DATABASE_PORT|Host port at which database is abailable at
 
+### XDebug Notes
+Default xdebug port is 9001. You can change it in XDEBUG_CONFIG variable.
 
+Note that Docker can connect to the port at following IP addesses __only__:
+
+IP Type|Value
+-|-
+IPv4|127.0.0.1
+IPv6|''
+
+VSCode could have following configuration in _launch.json_
+```json
+{
+    "name": "Win Xdebug",
+    "type": "php",
+    "request": "launch",
+    "port": 9001,
+    "hostname": "::",
+    "pathMappings": {
+        "/var/www/html": "${workspaceRoot}/htdocs"
+    }
+}
+```
+
+If you intend debugging code from WSL2 (Windows users), you have to do remote port forwarding from WSL to Windows host.
+VSCode configuration is following in _launch.json_
+```json
+{
+    "name": "WSL Xdebug",
+    "type": "php",
+    "request": "launch",
+    "port": 9001,
+    "hostname": "::",
+    "preLaunchTask": "WSL - Xdebug Start",
+    "postDebugTask": "WSL - Xdebug Stop",
+    "pathMappings": {
+        "/var/www/html": "${workspaceRoot}/htdocs"
+    }
+}
+```
+
+Corresponding tasks configuration in _tasks.json_
+```json
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "WSL - Xdebug Start",
+            "type": "shell",
+            "command": "sshpass -p \"PASSWORD\" ssh -f -N -M -S /tmp/ssh-xdebug -R 9001:localhost:9001 USER@host.docker.internal"
+        },
+        {
+            "label": "WSL - Xdebug Stop",
+            "type": "shell",
+            "command": "ssh -S /tmp/ssh-xdebug -O exit USER@host.docker.internal"
+        }
+    ]
+}
+```
+where
+
+- __USER__ is the active Windows User
+- __PASSWORD__ is the User's Password
+
+Read article ["Step Debugging"](https://xdebug.org/docs/step_debug) for more details
 ## PHP
 
 #### Extensions

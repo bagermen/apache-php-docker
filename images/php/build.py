@@ -3,10 +3,12 @@ import shlex
 from subprocess import Popen, PIPE
 import os,sys,inspect
 
+sys.dont_write_bytecode=True
 # load custom helpers module
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_dir = os.path.dirname(os.path.dirname(current_dir))
 sys.path.insert(0, parent_dir)
+
 from helpers import dot_env_vars
 
 parser = argparse.ArgumentParser(description='Create image')

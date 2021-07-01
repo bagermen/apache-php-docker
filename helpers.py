@@ -6,7 +6,7 @@ import re
 # @see https://docs.python.org/3/library/re.html
 # @see https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions
 def dot_env_vars(file):
-    reg = re.compile(r"^([^=]+)\=(.+)$|$")
+    reg = re.compile(r"^([^=]+)\=(.*)$|$")
 
     with open('.env', 'r') as file:
         vars_dict = dict(
