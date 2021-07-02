@@ -3,7 +3,7 @@
 ![Landing Page](https://i.ibb.co/yQqfn3f/Screenshot-1.png)
 
 
-A basic LAMP stack environment built using Docker Swarm. It consists of the following:
+A basic LAMP stack environment built witth Docker Swarm. It consists of following libraries:
 
 * PHP
 * Memcached
@@ -12,10 +12,10 @@ A basic LAMP stack environment built using Docker Swarm. It consists of the foll
 
 ##  Installation
 
-* Clone this repository on your local computer
+* Clone this repository into your computer
 * Init swarm mode `docker swarm init`
-* Copy **.env.dist** to **.env** and change variables to your needs
-* Use **deploy.py** to start and stop stack (use -h for help)
+* Copy **.env.dist** to **.env** and change variables to suit your needs
+* Use **deploy.py** to start and stop the stack (use -h for help)
 
 ```shell
 git clone https://github.com/bagermen/apache-php-docker.git
@@ -26,7 +26,7 @@ python deploy.py
 // visit localhost
 ```
 
-Your LAMP stack is now ready. You can access it via `http://localhost:8080`.
+Your LAMP stack is ready now. You can access it via `http://localhost:8080`.
 > Note. Port is defined with `HOST_PORT` variable at `.env` file
 
 ##  Configuration and Usage
@@ -39,7 +39,7 @@ This package comes with default configuration options. You can modify them by cr
 To make it easy, just copy the content from `.env.dist` file and update the environment variable values as per your need.
 
 ### Configuration Variables
-There are following configuration variables available and you can customize them by overwritting in your own `.env` file.
+There are following configuration variables available and you can customize them by overwritting `.env` file.
 
 |Variable|Descriptin|
 -|-
@@ -57,19 +57,17 @@ DATABASE_PASSWORD|Default database user password
 DATABASE_PORT|Host port at which database is abailable at
 
 ### XDebug Notes
-Default xdebug port is 9001. You can change it in XDEBUG_CONFIG variable.
+Default xdebug port is __9001__. You can change it in XDEBUG_CONFIG variable.
 
 Note that Docker can connect to the port at following IP addesses __only__:
 
-IP Type|Value
--|-
-IPv4|127.0.0.1
-IPv6|''
+- 127.0.0.1 (IPv4)
+- '' (IPv6)
 
 VSCode could have following configuration in _launch.json_
 ```json
 {
-    "name": "Win Xdebug",
+    "name": "Start Xdebug",
     "type": "php",
     "request": "launch",
     "port": 9001,
@@ -80,7 +78,7 @@ VSCode could have following configuration in _launch.json_
 }
 ```
 
-If you intend debugging code from WSL2 (Windows users), you have to do remote port forwarding from WSL to Windows host.
+If you intend debugging code from WSL2 (Windows Subsystem for Linux), you have to do remote port forwarding from WSL to Windows host.
 VSCode configuration is following in _launch.json_
 ```json
 {
@@ -125,7 +123,6 @@ Read article ["Step Debugging"](https://xdebug.org/docs/step_debug) for more det
 
 #### Extensions
 
-By default following extensions are installed.
 * mysqli
 * pdo_mysql
 * pdo_pgsql
