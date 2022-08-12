@@ -63,13 +63,11 @@ RUN apk add --update --no-cache libintl icu icu-dev libxml2-dev zip libzip-dev \
 # mysqli
 RUN docker-php-ext-install mysqli
 
-# mcrypt, gd
+# gd
 RUN apk add --update --no-cache \
-        libmcrypt-dev \
+        libsodium-dev \
         freetype-dev \
         libjpeg-turbo-dev \
         libpng-dev \
-    && printf "\n" | pecl install mcrypt \
-    && docker-php-ext-enable mcrypt \
     && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
     && docker-php-ext-install -j"$(getconf _NPROCESSORS_ONLN)" gd

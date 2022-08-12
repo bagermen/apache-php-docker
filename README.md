@@ -45,6 +45,9 @@ There are following configuration variables available and you can customize them
 -|-
 HOST_PORT|Host port at which the stack is available at
 HOST_PROJECT_DIR|Path to your project
+DOCUMENTROOT|Apache DOCUMENTROOT
+PHP_IMAGE|PHP image to be used in the stack
+MY_IMAGE|MySQL image to be used in the stack
 APACHE_CONF|Path to `httpd.conf`
 PHP_INI|Path to `php.ini`
 PHP_FPM|Path to `php-fpm.conf`
@@ -121,6 +124,11 @@ where
 Read article ["Step Debugging"](https://xdebug.org/docs/step_debug) for more details
 ## PHP
 
+### [PHP Images](https://hub.docker.com/repository/docker/besogon1/php)
+* besogon1/php:8.1.9-fpm-alpine-ext
+* besogon1/php:8-fpm-alpine-ext
+* besogon1/php:7-fpm-alpine-ext
+
 #### Extensions
 
 * mysqli
@@ -131,11 +139,11 @@ Read article ["Step Debugging"](https://xdebug.org/docs/step_debug) for more det
 * intl
 * zip
 * soap
-* mcrypt
+* sodium
 * gd
 * xdebug
 
-> Note. If you want to install more extensions, you have to create custom PHP image and use it instead of provided one.
+> Note. If you want to install more extensions, you have to create custom PHP image and use it instead of provided ones.
 
 
 ## Contributing

@@ -24,11 +24,12 @@ def check_stack_running(stack):
 def get_variables():
     is_windows = sys.platform.startswith('win')
     variables = {'ACTIVE_USER': '0:0'}
+    env = dot_env_vars('.env')
 
     if not is_windows:
         variables['ACTIVE_USER'] = str(os.getuid()) + ':' + str(os.getgid())
 
-    return {**dot_env_vars('.env'), **variables}
+    return {**env, **variables}
 
 args = parser.parse_args()
 
@@ -39,7 +40,7 @@ if args.remove:
     os.system(command + stack)
 elif (not check_stack_running(stack)):
     # deploy composer file into swarm
-    os.environ.update(dot_env_vars(os.path.join(current_dir, '.env')))
+    os.environ.update(get_variables())
     command = 'docker stack deploy --compose-file docker-compose.yml '
     if args.kubernetes:
         command += '--orchestrator=kubernetes '
