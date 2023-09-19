@@ -5,10 +5,10 @@ import re
 # Based on https://stackoverflow.com/questions/40216311/reading-in-environment-variables-from-an-environment-file
 # @see https://docs.python.org/3/library/re.html
 # @see https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions
-def dot_env_vars(f):
+def dot_env_vars(file_path):
     reg = re.compile(r"^([^=]+)\=(.*)$|$")
 
-    with open(f, 'r') as file:
+    with open(file_path, 'r') as file:
         vars_dict = dict(
             tuple(reg.findall(line))[0]
                 for line in file.readlines()
