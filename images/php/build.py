@@ -54,7 +54,7 @@ for tag in tags:
 
 build_cmd = "docker build --no-cache -t " + image + ":" + reduce(lambda tags_str, tag: tags_str + " -t " + image + ":" + tag, tags)
 
-variables = dot_env_vars('.env')
+variables = dot_env_vars(os.path.join(build_dir, '.env'))
 
 for var in variables:
     build_cmd += " --build-arg " + var + "=" + variables[var]
