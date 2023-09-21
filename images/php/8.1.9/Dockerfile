@@ -21,7 +21,7 @@ RUN apk add --update --no-cache \
     apk add --update --no-cache --virtual .gd_libsodium libsodium-dev freetype-dev libjpeg-turbo-dev libpng-dev && \
     apk add --no-cache --update --virtual .intl_zip_soap icu-dev libzip-dev libxml2-dev && \
     docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
-    docker-php-ext-install -j"$(getconf _NPROCESSORS_ONLN)" gd intl zip soap pdo_pgsql pdo_mysql mysqli && \
+    docker-php-ext-install -j"$(nproc)" gd intl zip soap pdo pdo_pgsql pdo_mysql mysqli bcmath opcache && \
     apk del .gd_libsodium && \
     apk del .intl_zip_soap && \
     apk del .db
@@ -53,7 +53,17 @@ RUN set -xe && \
         make install && \
         cd /tmp/ \
     ) && \
+    # Install redis
+    ( \
+        pecl install --nobuild redis && \
+        cd "$(pecl config-get temp_dir)/redis" && \
+        phpize && \
+        ./configure --enable-redis-igbinary && \
+        make -j$(nproc) && \
+        make install && \
+        cd /tmp/ \
+    ) && \
     # Enable PHP extensions
-    docker-php-ext-enable igbinary memcached && \
+    docker-php-ext-enable igbinary memcached redis && \
     rm -rf /tmp/* && \
     apk del .memcached-deps .phpize-deps

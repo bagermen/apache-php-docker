@@ -131,17 +131,21 @@ Read article ["Step Debugging"](https://xdebug.org/docs/step_debug) for more det
 
 #### Extensions
 
-* mysqli
-* pdo_mysql
-* pdo_pgsql
-* memcached
+* bcmath
+* gd
 * igbinary
 * intl
-* zip
+* memcached
+* mysqli
+* opcache
+* pdo
+* pdo_mysql
+* pdo_pgsql
+* redis
 * soap
 * sodium
-* gd
 * xdebug
+* zip
 
 > Note. If you want to install more extensions, you have to create custom PHP image and use it instead of provided ones.
 
