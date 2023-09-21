@@ -5,43 +5,45 @@ ARG TIMEZONE=Europe/Moscow
 
 # Install additional packages
 RUN set -ex \
-    && apk --update --no-cache add \
-    postgresql-dev \
-    tzdata \
-    autoconf \
-    gcc \
-    g++ \
-    make
+    && apk add --update --no-cache \
+    tzdata
 
 # Set timezone
 RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && echo ${TIMEZONE} > /etc/timezone \
     && printf '[PHP]\ndate.timezone = "%s"\n', ${TIMEZONE} > ${PHP_INI_DIR}/conf.d/tzone.ini
 
+# gd, libsodium, intl, zip, soap, postgresql, mysql, mysqli support
+RUN apk add --update --no-cache \
+        libpq \
+        libsodium freetype libjpeg-turbo libpng \
+        libintl icu-libs zip libzip libxml2 && \
+    apk add --no-cache --update --virtual .db postgresql-dev && \
+    apk add --update --no-cache --virtual .gd_libsodium libsodium-dev freetype-dev libjpeg-turbo-dev libpng-dev && \
+    apk add --no-cache --update --virtual .intl_zip_soap icu-dev libzip-dev libxml2-dev && \
+    docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
+    docker-php-ext-install -j"$(getconf _NPROCESSORS_ONLN)" gd intl zip soap pdo_pgsql pdo_mysql mysqli && \
+    apk del .gd_libsodium && \
+    apk del .intl_zip_soap && \
+    apk del .db
 
-# Install mysql support
-RUN docker-php-ext-install pdo_mysql
-
-# Install postgresql support
-RUN docker-php-ext-install pdo_pgsql
-
-# Install xdebug
-RUN pecl install xdebug-3.1.5 \
-    && docker-php-ext-enable xdebug \
-    && echo "xdebug.client_host=host.docker.internal" >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini \
-    && echo "xdebug.client_port=9001" >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini \
-    && echo "xdebug.mode=debug" >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini
-
-
+# Install xdebug, memcached, igbinary
+RUN set -xe && \
+    apk add --no-cache --update --virtual .phpize-deps $PHPIZE_DEPS && \
+    # Install xdebug
+    apk add --no-cache --update --virtual .xdebug-deps linux-headers && \
+    pecl install xdebug-3.1.5 && \
+    docker-php-ext-enable xdebug && \
+    echo "xdebug.client_host=host.docker.internal" >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini && \
+    echo "xdebug.mode=develop,debug" >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini && \
+    apk del .xdebug-deps && \
 # Install PHP Extensions: igbinary & memcached
 # @see https://stackoverflow.com/questions/40894385/how-can-i-install-the-php-memcached-extension-on-dockers-php7-alpine-image
-RUN apk add --no-cache --update libmemcached-libs zlib
-RUN set -xe && \
     cd /tmp/ && \
-    apk add --no-cache --update --virtual .phpize-deps $PHPIZE_DEPS && \
+    apk add --no-cache --update libmemcached-libs zlib libsasl && \
     apk add --no-cache --update --virtual .memcached-deps zlib-dev libmemcached-dev cyrus-sasl-dev && \
 # Install igbinary (memcached's deps)
     pecl install igbinary && \
-# Install memcached
+    # Install memcached
     ( \
         pecl install --nobuild memcached && \
         cd "$(pecl config-get temp_dir)/memcached" && \
@@ -51,23 +53,7 @@ RUN set -xe && \
         make install && \
         cd /tmp/ \
     ) && \
-# Enable PHP extensions
+    # Enable PHP extensions
     docker-php-ext-enable igbinary memcached && \
     rm -rf /tmp/* && \
     apk del .memcached-deps .phpize-deps
-
-# intl, zip, soap
-RUN apk add --update --no-cache libintl icu icu-dev libxml2-dev zip libzip-dev \
-    && docker-php-ext-install intl zip soap
-
-# mysqli
-RUN docker-php-ext-install mysqli
-
-# gd
-RUN apk add --update --no-cache \
-        libsodium-dev \
-        freetype-dev \
-        libjpeg-turbo-dev \
-        libpng-dev \
-    && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
-    && docker-php-ext-install -j"$(getconf _NPROCESSORS_ONLN)" gd
