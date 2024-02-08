@@ -1,6 +1,6 @@
 <?php
 // Test MySQL connection
-$dsn = 'mysql:dbname=database;host=database';
+$dsn = 'mysql:dbname=database;host=mysql_database';
 $user = 'root';
 $password = 'mW9PjVrNWIP0U7VTkBOvM2BFFr8=';
 

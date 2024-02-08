@@ -32,7 +32,7 @@
               <li>PHP <?= phpversion(); ?></li>
               <li>
                 <?php
-                  $link = mysqli_connect("database", "root", "mW9PjVrNWIP0U7VTkBOvM2BFFr8=", null);
+                  $link = mysqli_connect("mysql_database", "root", "mW9PjVrNWIP0U7VTkBOvM2BFFr8=", null);
 
                   /* check connection */
                   if (mysqli_connect_errno()) {
@@ -55,7 +55,8 @@
             <ul>
               <li><a href="phpinfo.php" class="has-text-primary">phpinfo()</a></li>
               <li><a href="memcached.php" class="has-text-primary">Test Memcached Connection</a></li>
-              <li><a href="mysql.php" class="has-text-primary">Test DB Connection</a></li>
+              <li><a href="mysql.php" class="has-text-primary">Test MySQL Connection</a></li>
+              <li><a href="postgres.php" class="has-text-primary">Test PostgreSQL Connection</a></li>
             </ul>
           </div>
         </div>

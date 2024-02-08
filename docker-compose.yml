@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3.8"
 services:
   apache:
     labels:
@@ -47,16 +47,15 @@ services:
       replicas: 1
     networks:
       - phpfpmnetwork
-  database:
+  mysql:
     labels:
-      type: database
+      type: mysql_database
     image: ${MY_IMAGE}
     deploy:
       replicas: 1
     environment:
       MYSQL_DATABASE: ${DATABASE}
       MYSQL_USER: ${DATABASE_USER}
-      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
     volumes:
       - type: volume
@@ -68,11 +67,34 @@ services:
     secrets:
       - mysql_root_password
     ports:
-      - '${DATABASE_PORT}:3306'
+      - '${MYSQL_PORT}:3306'
     networks:
       phpfpmnetwork:
         aliases:
-          - database
+          - mysql_database
+  postgres:
+    labels:
+      type: postgres_database
+    image: ${POSTGRES_IMAGE}
+    deploy:
+      replicas: 1
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres-passwd
+    volumes:
+      - type: volume
+        source: psql_data
+        target: /var/lib/postgresql/data
+    configs:
+      - source: postgres-conf
+        target: /etc/postgresql/postgresql.conf
+    secrets:
+      - postgres-passwd
+    ports:
+      - '${POSTGRES_PORT}:5432'
+    networks:
+      phpfpmnetwork:
+        aliases:
+          - postgres_database
 
 networks:
   phpfpmnetwork:
@@ -86,11 +108,18 @@ configs:
     file: ${PHP_FPM}
   mysql-conf:
     file: ${MY_CNF}
+  postgres-conf:
+    file: ${POSTGRES_CONFIG}
 
 secrets:
   mysql_root_password:
     file: ${MY_PWD}
+  postgres-passwd:
+    file: ${POSTGRES_PWD}
 volumes:
   mysql_data:
     external: true
     name: phpapachemysql_mysql
+  psql_data:
+    external: true
+    name: phpapachemysql_psql
