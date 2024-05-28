@@ -13,6 +13,7 @@ parser.add_argument('-r', '--remove', action='store_true', help="remove stack")
 parser.add_argument('-k', '--kubernetes', action='store_true', help="Deploy to kubernetes")
 
 stack = 'apachephp'
+network = 'phpfpmnetwork'
 
 def check_stack_running(stack):
     command = "docker stack ls --format '{{.Name}}'"
@@ -20,6 +21,21 @@ def check_stack_running(stack):
     stacks = out.strip().decode('utf-8').split(sep='\n')
 
     return not err and stacks.count(stack) > 0
+
+def is_network_exists(network):
+    command = "docker network ls --format '{{.Name}}' --filter name=" + str(network)
+    out, err = Popen(shlex.split(command), stdout=PIPE, stderr=PIPE).communicate()
+    stacks = out.strip().decode('utf-8').split(sep='\n')
+
+    return not err and stacks.count(network) > 0
+
+def ensure_network(network):
+    if (is_network_exists(network)):
+        return
+
+    command = 'docker network create -d overlay --attachable ' + str(network)
+    print(command)
+    os.system(command)
 
 def get_variables():
     is_windows = sys.platform.startswith('win')
@@ -41,6 +57,7 @@ if args.remove:
 elif (not check_stack_running(stack)):
     # deploy composer file into swarm
     os.environ.update(get_variables())
+    ensure_network(network)
     command = 'docker stack deploy --compose-file docker-compose.yml '
     if args.kubernetes:
         command += '--orchestrator=kubernetes '

@@ -16,6 +16,7 @@ services:
       - type: bind
         source: ${HOST_PROJECT_DIR}
         target: /var/www/html
+        consistency: cached
         read_only: true
     ports:
       - '${HOST_PORT}:80'
@@ -37,6 +38,7 @@ services:
       - type: bind
         source: ${HOST_PROJECT_DIR}
         target: /var/www/html
+        consistency: cached
     environment:
       XDEBUG_CONFIG: $XDEBUG_CONFIG
     networks:
@@ -61,6 +63,7 @@ services:
       - type: volume
         source: mysql_data
         target: /var/lib/mysql
+        consistency: delegated
     configs:
       - source: mysql-conf
         target: /etc/mysql/my.cnf
@@ -84,6 +87,7 @@ services:
       - type: volume
         source: psql_data
         target: /var/lib/postgresql/data
+        consistency: delegated
     configs:
       - source: postgres-conf
         target: /etc/postgresql/postgresql.conf
@@ -98,6 +102,7 @@ services:
 
 networks:
   phpfpmnetwork:
+    external: true
 
 configs:
   httpd-conf:
