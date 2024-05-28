@@ -1,0 +1,8 @@
+{
+    "id": "php-fpm",
+    "name": "Fix PHP-FPM Entrypoint",
+    "entrypoint": "/usr/local/share/php-fpm-init.sh",
+    "installsAfter": [
+        "ghcr.io/devcontainers/features/common-utils"
+    ]
+}

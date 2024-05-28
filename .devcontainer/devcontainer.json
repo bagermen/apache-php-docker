@@ -1,0 +1,60 @@
+{
+    "name": "PHP",
+    "image": "mcr.microsoft.com/devcontainers/php:8.3",
+    // "features": {
+        // "ghcr.io/devcontainers/features/common-utils:2": {
+        //     "installZsh": "true",
+        //     "username": "vscode",
+        //     "userUid": "1000",
+        //     "userGid": "1000",
+        //     "upgradePackages": "true"
+        // },
+        // "./features/composer": {},
+        // "./features/php-fpm": {}
+        // "ghcr.io/devcontainers/features/git:1": {
+        //     "version": "latest",
+        //     "ppa": "false"
+        // }
+    // },
+    // "overrideFeatureInstallOrder": [
+    //     "ghcr.io/devcontainers/features/common-utils"
+    // ],
+    // Configure tool-specific properties.
+    "customizations": {
+        // Configure properties specific to VS Code.
+        // "vscode": {
+        //     // Set *default* container specific settings.json values on container create.
+        //     "settings": {
+        //         "php.validate.executablePath": "/usr/local/bin/php"
+        //     },
+        //     // Add the IDs of extensions you want installed when the container is created.
+        //     "extensions": [
+        //         "xdebug.php-debug",
+        //         "bmewburn.vscode-intelephense-client"
+        //     ]
+        // }
+    },
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [
+    //     8080
+    // ],
+    // Use 'postCreateCommand' to run commands after the container is created.
+    // "postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html"
+
+    // Set `remoteUser` to `root` to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+    "remoteUser": "vscode",
+    // "containerUser":"vscode",
+    // "containerEnv": {
+    //     "XDEBUG_CONFIG": "client_port=9001"
+    // },
+
+    "runArgs": ["--network=phpfpmnetwork", "--hostname=devcontainer"],
+
+    // "mounts": [
+    //     { "source": "${localWorkspaceFolder}/images/php/8.3.3/conf/php.ini", "target": "/usr/local/etc/php/php.ini", "type": "bind" },
+    //     { "source": "${localWorkspaceFolder}/images/php/8.3.3/conf/php-fpm.conf", "target": "/usr/local/etc/php-fpm.conf", "type": "bind" }
+    // ],
+    // "workspaceMount": "source=${localWorkspaceFolder},target=/home/vscode/workspace,type=bind,consistency=cached",
+    // "workspaceFolder": "/home/vscode/workspace",
+    "initializeCommand": ["py", "${localWorkspaceFolder}/deploy.py"]
+}
